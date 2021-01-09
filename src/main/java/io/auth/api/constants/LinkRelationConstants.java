@@ -1,6 +1,6 @@
 package io.auth.api.constants;
 
 public interface LinkRelationConstants {
-
-    public static final String INDEX = "index";
+    String INDEX = "index";
+    String MEMBER_INDEX = "member_index";
 }

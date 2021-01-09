@@ -1,12 +1,14 @@
 package io.auth.api.controller;
 
 import io.auth.api.constants.CustomMediaTypeConstants;
+import io.auth.api.domain.common.ProcessingResult;
+import io.auth.api.domain.common.ProcessingResultEntityModel;
 import io.auth.api.domain.dto.MemberRequest;
 import io.auth.api.domain.entity.MemberEntity;
 import io.auth.api.resource.ErrorsEntityModel;
+import io.auth.api.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -27,6 +29,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 public class MemberController {
 
     private final ModelMapper modelMapper;
+    private final MemberService memberService;
 
     @PostMapping
     public ResponseEntity createMember(@RequestBody @Valid MemberRequest memberRequest, Errors errors){
@@ -42,10 +45,18 @@ public class MemberController {
         // Mapping Request Object To Entity Object
         MemberEntity memberEntity = this.modelMapper.map(memberRequest, MemberEntity.class);
 
+        // Process Create Member
+        ProcessingResult processingResult = this.memberService.createMemberProcess(memberEntity);
+
         // Create Self URI info
-        URI selfUri = linkTo(MemberController.class).withSelfRel().toUri();
+        URI createdUri = linkTo(MemberController.class).withSelfRel().toUri();
+        ProcessingResultEntityModel processingResultEntityModel = new ProcessingResultEntityModel(processingResult);
 
         // Return 201 Created and SelfUri
-        return ResponseEntity.created(selfUri).body(memberEntity);
+        return ResponseEntity.created(createdUri).body(processingResultEntityModel);
+    }
+
+    private ResponseEntity<ErrorsEntityModel> badRequest(Errors errors) {
+        return ResponseEntity.badRequest().body(new ErrorsEntityModel(errors));
     }
 }

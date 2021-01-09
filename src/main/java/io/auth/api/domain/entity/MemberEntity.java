@@ -1,11 +1,10 @@
 package io.auth.api.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -19,8 +18,15 @@ public class MemberEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
 
+    @Column(unique = true)
+    @NotBlank
     String email;
+
+    @JsonIgnore
+    @NotBlank
     String password;
+
+    @NotBlank
     String name;
 
     @Builder
