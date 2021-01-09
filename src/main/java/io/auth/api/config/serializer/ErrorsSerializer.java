@@ -19,45 +19,6 @@ public class ErrorsSerializer extends JsonSerializer<Errors> {
     private final String REJECTED_VALUE = "rejectedValue";
     private final String ARGUMENT = "argument";
 
-//    @Override
-//    public void serialize(Errors errors, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-//        jsonGenerator.writeStartArray();
-//        errors.getFieldErrors().stream().forEach(error -> {
-//            try {
-//                jsonGenerator.writeStartObject();
-//                jsonGenerator.writeStringField(OBJECT_NAME, error.getObjectName());
-//                jsonGenerator.writeStringField(FIELD, error.getField());
-//                jsonGenerator.writeStringField(CODE, error.getCode());
-//                jsonGenerator.writeStringField(DEFAULT_MESSAGE, error.getDefaultMessage());
-//                Object rejectedValue = error.getRejectedValue();
-//                if(rejectedValue != null) {
-//                    jsonGenerator.writeStringField(REJECTED_VALUE, rejectedValue.toString());
-//                }
-//                jsonGenerator.writeEndObject();
-//            } catch (IOException ioException) {
-//                ioException.printStackTrace();
-//            }
-//        });
-//
-//        errors.getGlobalErrors().stream().forEach(error -> {
-//            try {
-//                jsonGenerator.writeStartObject();
-//                jsonGenerator.writeStringField(OBJECT_NAME, error.getObjectName());
-//                jsonGenerator.writeStringField(CODE, error.getCode());
-//                jsonGenerator.writeStringField(DEFAULT_MESSAGE, error.getDefaultMessage());
-//
-//                Object[] arguments = error.getArguments();
-//                if(arguments != null){
-//                    jsonGenerator.writeStringField(ARGUMENT, Arrays.toString(error.getArguments()));
-//                }
-//                jsonGenerator.writeEndObject();
-//            } catch (IOException ioException) {
-//                ioException.printStackTrace();
-//            }
-//        });
-//        jsonGenerator.writeEndArray();
-//    }
-
     @Override
     public void serialize(Errors errors, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeFieldName("errors");
@@ -65,13 +26,13 @@ public class ErrorsSerializer extends JsonSerializer<Errors> {
         errors.getFieldErrors().stream().forEach(error -> {
             try {
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("objectName", error.getObjectName());
-                jsonGenerator.writeStringField("field", error.getField());
-                jsonGenerator.writeStringField("code", error.getCode());
-                jsonGenerator.writeStringField("defaultMessage", error.getDefaultMessage());
+                jsonGenerator.writeStringField(OBJECT_NAME, error.getObjectName());
+                jsonGenerator.writeStringField(FIELD, error.getField());
+                jsonGenerator.writeStringField(CODE, error.getCode());
+                jsonGenerator.writeStringField(DEFAULT_MESSAGE, error.getDefaultMessage());
                 Object rejectedValue = error.getRejectedValue();
                 if(rejectedValue != null) {
-                    jsonGenerator.writeStringField("rejectedValue", rejectedValue.toString());
+                    jsonGenerator.writeStringField(REJECTED_VALUE, rejectedValue.toString());
                 }
                 jsonGenerator.writeEndObject();
             } catch (IOException ioException) {
@@ -82,13 +43,13 @@ public class ErrorsSerializer extends JsonSerializer<Errors> {
         errors.getGlobalErrors().stream().forEach(error -> {
             try {
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("objectName", error.getObjectName());
-                jsonGenerator.writeStringField("code", error.getCode());
-                jsonGenerator.writeStringField("defaultMessage", error.getDefaultMessage());
+                jsonGenerator.writeStringField(OBJECT_NAME, error.getObjectName());
+                jsonGenerator.writeStringField(CODE, error.getCode());
+                jsonGenerator.writeStringField(DEFAULT_MESSAGE, error.getDefaultMessage());
 
                 Object[] arguments = error.getArguments();
                 if(arguments != null){
-                    jsonGenerator.writeStringField("argument", Arrays.toString(error.getArguments()));
+                    jsonGenerator.writeStringField(ARGUMENT, Arrays.toString(error.getArguments()));
                 }
                 jsonGenerator.writeEndObject();
             } catch (IOException ioException) {
