@@ -1,45 +1,33 @@
 package io.auth.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.auth.api.constants.CustomMediaTypeConstants;
+import io.auth.api.controller.common.BaseTest;
 import io.auth.api.domain.dto.MemberRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@AutoConfigureMockMvc
-class MemberControllerSuccessTest {
+class MemberControllerSuccessTest extends BaseTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
+    
     @Test
     @DisplayName("회원 생성 API")
     public void createMemberAPI() throws Exception {
         // Given
-        String name = "name";
-        String username = "username";
-        String remark = "remark";
+        String email = "project.log.062@gmail.com";
+        String password = "chldydtjr1!";
+        String name = "최용석";
 
         MemberRequest memberRequest = MemberRequest.builder()
+                .email(email)
+                .password(password)
                 .name(name)
-                .username(username)
-                .remark(remark)
                 .build();
 
         String urlTemplate = "/api/member";

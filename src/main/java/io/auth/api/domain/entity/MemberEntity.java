@@ -14,20 +14,19 @@ import javax.persistence.Id;
 @Entity
 @ToString
 public class MemberEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
 
-    String username;
-
+    String email;
+    String password;
     String name;
 
-    String remark;
-
     @Builder
-    public MemberEntity(String name, String username, String remark) {
+    public MemberEntity(String name, String email, String password) {
         this.name = name;
-        this.username = username;
-        this.remark = remark;
+        this.email = email;
+        this.password = password;
     }
 }
