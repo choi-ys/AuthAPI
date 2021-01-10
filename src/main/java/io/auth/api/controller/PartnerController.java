@@ -3,10 +3,10 @@ package io.auth.api.controller;
 import io.auth.api.constants.CustomMediaTypeConstants;
 import io.auth.api.domain.common.ProcessingResult;
 import io.auth.api.domain.common.ProcessingResultEntityModel;
-import io.auth.api.domain.dto.MemberRequest;
-import io.auth.api.domain.entity.MemberEntity;
+import io.auth.api.domain.dto.PartnerSignUp;
+import io.auth.api.domain.entity.PartnerEntity;
 import io.auth.api.resource.ErrorsEntityModel;
-import io.auth.api.service.MemberService;
+import io.auth.api.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
@@ -26,13 +26,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @RequestMapping(value = "/api/member", consumes = MediaType.APPLICATION_JSON_VALUE, produces = CustomMediaTypeConstants.HAL_JSON_UTF8_VALUE)
 @RequiredArgsConstructor
-public class MemberController {
+public class PartnerController {
 
     private final ModelMapper modelMapper;
-    private final MemberService memberService;
+    private final PartnerService partnerService;
 
     @PostMapping
-    public ResponseEntity createMember(@RequestBody @Valid MemberRequest memberRequest, Errors errors){
+    public ResponseEntity createMember(@RequestBody @Valid PartnerSignUp partnerSignUp, Errors errors){
 
         /* choi-ys : 2001-01-09
         * Request value Validation check to JSR303 Annotation
@@ -43,13 +43,13 @@ public class MemberController {
         }
 
         // Mapping Request Object To Entity Object
-        MemberEntity memberEntity = this.modelMapper.map(memberRequest, MemberEntity.class);
+        PartnerEntity partnerEntity = this.modelMapper.map(partnerSignUp, PartnerEntity.class);
 
         // Process Create Member
-        ProcessingResult processingResult = this.memberService.createMemberProcess(memberEntity);
+        ProcessingResult processingResult = this.partnerService.createPartner(partnerEntity);
 
         // Create Self URI info
-        URI createdUri = linkTo(MemberController.class).withSelfRel().toUri();
+        URI createdUri = linkTo(PartnerController.class).withSelfRel().toUri();
         ProcessingResultEntityModel processingResultEntityModel = new ProcessingResultEntityModel(processingResult);
 
         // Return 201 Created and SelfUri

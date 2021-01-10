@@ -1,7 +1,7 @@
 package io.auth.api.controller;
 
 import io.auth.api.controller.common.BaseTest;
-import io.auth.api.domain.dto.MemberRequest;
+import io.auth.api.domain.dto.PartnerSignUp;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.MediaTypes;
@@ -13,20 +13,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class MemberControllerSuccessTest extends BaseTest {
+class PartnerControllerSuccessTest extends BaseTest {
 
     @Test
     @DisplayName("회원 생성 API")
     public void createMemberAPI() throws Exception {
         // Given
-        String email = "project.log.062@gmail.com";
+        String id = "project062";
         String password = "chldydtjr1!";
-        String name = "최용석";
+        String partnerEmail = "project.log.062@gmail.com";
+        String partnerCompanyName = "naver";
 
-        MemberRequest memberRequest = MemberRequest.builder()
-                .email(email)
+        PartnerSignUp partnerSignUp = PartnerSignUp.builder()
+                .id(id)
                 .password(password)
-                .name(name)
+                .partnerEmail(partnerEmail)
+                .partnerCompanyName(partnerCompanyName)
                 .build();
         String urlTemplate = "/api/member";
 
@@ -34,7 +36,7 @@ class MemberControllerSuccessTest extends BaseTest {
         ResultActions resultActions = this.mockMvc.perform(post(urlTemplate)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
-                .content(this.objectMapper.writeValueAsString(memberRequest))
+                .content(this.objectMapper.writeValueAsString(partnerSignUp))
         );
 
         // Then
@@ -43,9 +45,10 @@ class MemberControllerSuccessTest extends BaseTest {
                 .andExpect(header().exists(HttpHeaders.CONTENT_TYPE))
                 .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andExpect(jsonPath("_links").exists())
-                .andExpect(jsonPath("data.id").value("1"))
-                .andExpect(jsonPath("data.email").exists())
-                .andExpect(jsonPath("data.name").exists())
+                .andExpect(jsonPath("data.partnerNo").value("1"))
+                .andExpect(jsonPath("data.id").exists())
+                .andExpect(jsonPath("data.partnerEmail").exists())
+                .andExpect(jsonPath("data.partnerCompanyName").exists())
         ;
     }
 }
