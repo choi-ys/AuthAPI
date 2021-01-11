@@ -40,12 +40,6 @@ public class PartnerService implements UserDetailsService {
         }
     }
 
-//    public ProcessingResult createPartner(PartnerEntity partnerEntity){
-//        PartnerEntity createdPartnerEntity = this.partnerRepository.save(partnerEntity);
-//        ProcessingResult processingResult = new ProcessingResult();
-//        return processingResult.processSuccess(createdPartnerEntity);
-//    }
-
     /**
      * Application에서 정의한 Account domain을 Spring security에서 정의한 UsertDetail Interface로 변환
      * @param id
