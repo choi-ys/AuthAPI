@@ -23,6 +23,9 @@ import java.net.URI;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 
+/** 용석:2021-01-09
+ * 제휴사 정보 요청 처리부
+ */
 @RestController
 @RequestMapping(value = "/api/member", consumes = MediaType.APPLICATION_JSON_VALUE, produces = CustomMediaTypeConstants.HAL_JSON_UTF8_VALUE)
 @RequiredArgsConstructor
@@ -31,6 +34,16 @@ public class PartnerController {
     private final ModelMapper modelMapper;
     private final PartnerService partnerService;
 
+    /** 용석:2021-01-09
+     * 제휴사 계정 생성 요청 처리 부
+     * @param partnerSignUp
+     *  -> 유효성 검사 : JSR 303을 이용한 기본 유효성 검사
+     * @param errors
+     * @return
+     *  -> 201 Creatd
+     *  -> 400 Bad Reqeust
+     *  -> 500 Server Error
+     */
     @PostMapping
     public ResponseEntity createMember(@RequestBody @Valid PartnerSignUp partnerSignUp, Errors errors){
 

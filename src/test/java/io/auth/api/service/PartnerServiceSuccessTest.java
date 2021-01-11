@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -17,9 +18,12 @@ class PartnerServiceSuccessTest {
     @Autowired
     PartnerService partnerService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Test
     @DisplayName("회원 생성 Service")
-    public void createMemberService(){
+    public void createPartner(){
         // Given
         String id = "project.062";
         String password = "chldydtjr1!";
@@ -40,10 +44,14 @@ class PartnerServiceSuccessTest {
         assertThat(createdProcessingResult).isNotNull();
         assertThat(createdProcessingResult.isSuccess()).isEqualTo(true);
         assertThat(createdProcessingResult.getData()).isNotNull();
+
+        // Then : partner password encoding chekc
+        PartnerEntity createPartnerEntity = (PartnerEntity) createdProcessingResult.getData();
+        assertThat(this.passwordEncoder.matches(password, createPartnerEntity.getPassword())).isTrue();
     }
 
     @Test
-    public void findById(){
+    public void ReadPartnerDetail(){
         UserDetailsService userDetailsService = partnerService;
 
     }
