@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -37,22 +38,26 @@ class PartnerServiceSuccessTest {
                 .partnerCompanyName(partnerCompanyName)
                 .build();
 
-        // When
-        ProcessingResult createdProcessingResult = this.partnerService.createPartner(partnerEntity);
+        partnerEntity.signUp();
 
-        // Then
+        // When : create Partner Account Entity
+        ProcessingResult createdProcessingResult = this.partnerService.createPartner(partnerEntity);
+        PartnerEntity createdPartnerEntity = (PartnerEntity) createdProcessingResult.getData();
+
+        // Then : check cre
         assertThat(createdProcessingResult).isNotNull();
         assertThat(createdProcessingResult.isSuccess()).isEqualTo(true);
         assertThat(createdProcessingResult.getData()).isNotNull();
 
+        // When : Select Created Partner Account Entity
+        UserDetailsService userDetailsService = partnerService;
+        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
+
+        // Then
+        assertThat(createdPartnerEntity.getId()).matches(userDetails.getUsername());
+
         // Then : partner password encoding chekc
         PartnerEntity createPartnerEntity = (PartnerEntity) createdProcessingResult.getData();
         assertThat(this.passwordEncoder.matches(password, createPartnerEntity.getPassword())).isTrue();
-    }
-
-    @Test
-    public void ReadPartnerDetail(){
-        UserDetailsService userDetailsService = partnerService;
-
     }
 }

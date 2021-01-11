@@ -9,6 +9,7 @@ import io.auth.api.resource.ErrorsEntityModel;
 import io.auth.api.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -60,13 +61,16 @@ public class PartnerController {
 
         // Process Create Member
         ProcessingResult processingResult = this.partnerService.createPartner(partnerEntity);
-
-        // Create Self URI info
-        URI createdUri = linkTo(PartnerController.class).withSelfRel().toUri();
         ProcessingResultEntityModel processingResultEntityModel = new ProcessingResultEntityModel(processingResult);
 
-        // Return 201 Created and SelfUri
-        return ResponseEntity.created(createdUri).body(processingResultEntityModel);
+        // Return Response by Processing Result
+        if(processingResult.isSuccess()){
+            // Return 201 Created and Location info When Process is success
+            URI createdUri = linkTo(PartnerController.class).withSelfRel().toUri();
+            return ResponseEntity.created(createdUri).body(processingResultEntityModel);
+        } else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(processingResultEntityModel);
+        }
     }
 
     private ResponseEntity<ErrorsEntityModel> badRequest(Errors errors) {
