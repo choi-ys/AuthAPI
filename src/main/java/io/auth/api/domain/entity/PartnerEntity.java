@@ -25,7 +25,6 @@ public class PartnerEntity {
     @NotBlank
     private String password;
 
-    @Column(unique = true)
     @NotBlank
     private String partnerEmail;
 

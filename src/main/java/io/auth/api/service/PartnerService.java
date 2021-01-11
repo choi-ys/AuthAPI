@@ -12,22 +12,48 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/** 용석:2021-01-11
+ * 제휴사 관련 기능 처리 부
+ * -> Success TC : PartnerServiceSuccessTest.java
+ * -> Fail TC : PartnerServiceFailTest.java
+ */
 @Service
 @RequiredArgsConstructor
 public class PartnerService implements UserDetailsService {
 
     private final PartnerRepository partnerRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    /** 용석
+     * 파트너 정보 생성
+     *  - 처리내용
+     *    -> SpringSecurity의 PasswordEncoder를 이용한 bcript 암호화 [기본값 : bcript]
+     *    -> {@Link ProcessingResult}객체를 이용한 처리 결과 반환
+     * @param partnerEntity
+     * @return
+     */
     public ProcessingResult createPartner(PartnerEntity partnerEntity) {
         ProcessingResult processingResult = new ProcessingResult();
         PartnerEntity createdPartnerEntity;
         try {
+            /* Partner Entity의 id 중복 검사 */
+            if(this.isDuplicatedId(partnerEntity.getId())){
+                return processingResult.processFail(Error.builder()
+                        .code(-1)
+                        .detail("ERROR Duplicated Partner")
+                        .Msg("이미 존재하는 회원입니다.")
+                        .build());
+            }
+
+            /* SpringSecurity의 PasswordEncoder를 이용한 bcript 암호화 [기본값] */
+            partnerEntity.setPassword(this.passwordEncoder.encode(partnerEntity.getPassword()));
             createdPartnerEntity = partnerRepository.save(partnerEntity);
             return processingResult.processSuccess(createdPartnerEntity);
         } catch (Exception e) {
@@ -35,16 +61,14 @@ public class PartnerService implements UserDetailsService {
             return processingResult.processFail(Error.builder()
                     .code(-1)
                     .detail(e.getMessage())
-                    .Msg("회원 가입에 실패하였습니다.")
+                    .Msg("회원 가입에 실패하였습니다. 관리자에게 문의 하세요.")
                     .build());
         }
     }
 
-//    public ProcessingResult createPartner(PartnerEntity partnerEntity){
-//        PartnerEntity createdPartnerEntity = this.partnerRepository.save(partnerEntity);
-//        ProcessingResult processingResult = new ProcessingResult();
-//        return processingResult.processSuccess(createdPartnerEntity);
-//    }
+    public boolean isDuplicatedId(String id){
+        return partnerRepository.countById(id) == 0 ? false : true;
+    }
 
     /**
      * Application에서 정의한 Account domain을 Spring security에서 정의한 UsertDetail Interface로 변환
@@ -67,8 +91,6 @@ public class PartnerService implements UserDetailsService {
          *  - UserDetails interface로 객체 변환 처리를 구현할 경우 모든 메소드를 구현 해야하므로,
          *  - UserDetails의 User객체를 이용하여 MemberEntity 체를 Spring Security의 UserDetails 객체로 변환한다.
          */
-        String grantedAuthority = "ROLE" + partnerEntity.getRoles();
-//        return new User(partnerEntity.getId(), partnerEntity.getPassword(), grantedAuthority));
         return new User(partnerEntity.getId(), partnerEntity.getPassword(), this.roleToAuthorities(partnerEntity.getRoles()));
     }
 
