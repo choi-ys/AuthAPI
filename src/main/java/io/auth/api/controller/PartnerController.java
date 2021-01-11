@@ -9,6 +9,7 @@ import io.auth.api.resource.ErrorsEntityModel;
 import io.auth.api.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -23,6 +24,9 @@ import java.net.URI;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 
+/** 용석:2021-01-09
+ * 제휴사 정보 요청 처리부
+ */
 @RestController
 @RequestMapping(value = "/api/member", consumes = MediaType.APPLICATION_JSON_VALUE, produces = CustomMediaTypeConstants.HAL_JSON_UTF8_VALUE)
 @RequiredArgsConstructor
@@ -31,6 +35,16 @@ public class PartnerController {
     private final ModelMapper modelMapper;
     private final PartnerService partnerService;
 
+    /** 용석:2021-01-09
+     * 제휴사 계정 생성 요청 처리 부
+     * @param partnerSignUp
+     *  -> 유효성 검사 : JSR 303을 이용한 기본 유효성 검사
+     * @param errors
+     * @return
+     *  -> 201 Creatd
+     *  -> 400 Bad Reqeust
+     *  -> 500 Server Error
+     */
     @PostMapping
     public ResponseEntity createMember(@RequestBody @Valid PartnerSignUp partnerSignUp, Errors errors){
 
@@ -47,13 +61,16 @@ public class PartnerController {
 
         // Process Create Member
         ProcessingResult processingResult = this.partnerService.createPartner(partnerEntity);
-
-        // Create Self URI info
-        URI createdUri = linkTo(PartnerController.class).withSelfRel().toUri();
         ProcessingResultEntityModel processingResultEntityModel = new ProcessingResultEntityModel(processingResult);
 
-        // Return 201 Created and SelfUri
-        return ResponseEntity.created(createdUri).body(processingResultEntityModel);
+        // Return Response by Processing Result
+        if(processingResult.isSuccess()){
+            // Return 201 Created and Location info When Process is success
+            URI createdUri = linkTo(PartnerController.class).withSelfRel().toUri();
+            return ResponseEntity.created(createdUri).body(processingResultEntityModel);
+        } else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(processingResultEntityModel);
+        }
     }
 
     private ResponseEntity<ErrorsEntityModel> badRequest(Errors errors) {

@@ -17,7 +17,7 @@ class PartnerControllerSuccessTest extends BaseTest {
 
     @Test
     @DisplayName("회원 생성 API")
-    public void createMemberAPI() throws Exception {
+    public void createPartnerAPI() throws Exception {
         // Given
         String id = "project062";
         String password = "chldydtjr1!";

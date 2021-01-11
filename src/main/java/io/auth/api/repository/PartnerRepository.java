@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface PartnerRepository extends JpaRepository<PartnerEntity, Long> {
     Optional<PartnerEntity> findById(String id);
+    Long countById(String id);
 }
